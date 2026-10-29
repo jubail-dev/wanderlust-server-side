@@ -77,12 +77,24 @@ app.delete("/destination/:id", async(req,res) =>{
 })
 
 
-app.post("/bookings", async(req,res) => {
-    const data = req.body
-    const result = await bokingCollections.insertOne(data)
-    res.send(result)
-  
-})
+app.post("/bookings", async (req, res) => {
+  try {
+    const { _id: destinationId, ...bookingData } = req.body;
+
+    const result = await bokingCollections.insertOne({
+      ...bookingData,
+      destinationId,
+    });
+
+    res.status(201).send(result);
+  } catch (error) {
+    console.error("Booking insert error:", error);
+
+    res.status(500).send({
+      message: "Failed to create booking",
+    });
+  }
+});
 
 app.get("/my-bookings/:email", async(req,res) =>{
   const {email} = req.params
