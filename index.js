@@ -1,4 +1,4 @@
-"use client"
+
 import express from "express"
 import { MongoClient, ObjectId } from 'mongodb';
 import 'dotenv/config'
