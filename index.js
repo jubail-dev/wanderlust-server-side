@@ -5,7 +5,7 @@ import 'dotenv/config'
 import cors from "cors"
 
 const app = express()
-const PORT = 5000
+const PORT = process.env.PORT || 5000
 
 app.use(cors())
 app.use(express.json())
@@ -84,5 +84,14 @@ app.post("/bookings", async(req,res) => {
   
 })
 
+app.get("/my-bookings/:email", async(req,res) =>{
+  const {email} = req.params
+  const result = await bokingCollections.find({email:email}).toArray()
+  res.send(result)
+})
+
+app.listen(PORT, () =>{
+  console.log(`You are Connected On Port ${PORT}`);
+})
 
 export default app;
