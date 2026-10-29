@@ -81,6 +81,24 @@ app.post("/bookings", async (req, res) => {
   try {
     const { _id: destinationId, ...bookingData } = req.body;
 
+    if (!bookingData.email || !destinationId) {
+      return res.status(400).send({
+        message: "Email and destination ID are required",
+      });
+    }
+
+    // Check if this user already booked this destination
+    const existingBooking = await bokingCollections.findOne({
+      email: bookingData.email,
+      destinationId: destinationId,
+    });
+
+    if (existingBooking) {
+      return res.status(409).send({
+        message: "You have already booked this destination",
+      });
+    }
+
     const result = await bokingCollections.insertOne({
       ...bookingData,
       destinationId,
@@ -88,7 +106,7 @@ app.post("/bookings", async (req, res) => {
 
     res.status(201).send(result);
   } catch (error) {
-    console.error("Booking insert error:", error);
+    console.error("Booking error:", error);
 
     res.status(500).send({
       message: "Failed to create booking",
